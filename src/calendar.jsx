@@ -28,6 +28,12 @@ export default class Calendar extends Component {
     };
   }
 
+  /*
+   *  ===============
+   *    Logic
+   *  ===============
+   */
+
   mapMonth = (date) => {
     const year = dateFns.getYear(date);
     const month = dateFns.getMonth(date);
@@ -82,9 +88,83 @@ export default class Calendar extends Component {
     });
   };
 
+  /*
+   *  ===============
+   *    Visuals
+   *  ===============
+   */
+
+  getStyles() {
+    const styles = {};
+    styles.month = {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginRight: '10px',
+      marginLeft: '10px'
+    };
+    styles.chevron = {
+      cursor: 'pointer'
+    };
+    styles.title = {
+      width: '50%',
+      minWidth: '150px',
+      textAlign: 'center'
+    }
+    styles.dateHeader = {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+      marginTop: '10px',
+      textAlign: 'center'
+    }
+    return styles;
+  }
+
+  renderHeader(styles) {
+    const days = this.renderDaysHeader(styles)
+    return (
+      <div className='calendar-header'>
+        <div className='calendar-month' style={styles.month}>
+          <div style={styles.chevron} onClick={this.prevMonth}>
+            <i className='fa fa-chevron-left' />
+          </div>
+          <div style={styles.title}>
+            {dateFns.format(this.state.currentMonth, this.props.headerFormat)}
+          </div>
+          <div style={styles.chevron} onClick={this.nextMonth}>
+            <i className='fa fa-chevron-right' />
+          </div>
+        </div>
+        {days}
+      </div>
+    );
+  }
+
+  renderDaysHeader(styles) {
+    const days = [];
+    const startDate = dateFns.startOfWeek(this.state.currentMonth);
+    for (let i = 0; i < 7; i++) {
+      days.push(
+        <div style={{width: '100%'}} key={i}>
+          {dateFns.format(dateFns.addDays(startDate, i), "dddd")}
+        </div>
+      );
+    }
+    return (
+      <div className="calendar-days-header" style={styles.dateHeader}>
+        {days}
+      </div>
+    );
+  }
+
   render() {
+    const styles = this.getStyles();
+    const header = this.renderHeader(styles);
     return (
       <div className='calendar-body'>
+        {header}
       </div>
     );
   }
