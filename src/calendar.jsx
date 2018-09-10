@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import dateFns from 'date-fns';
+import Month from './month.jsx';
 
 export default class Calendar extends Component {
   static propTypes = {
@@ -20,6 +21,7 @@ export default class Calendar extends Component {
     const month = dateFns.getMonth(props.selectedDate);
     this.state = {
       currentMonth: props.selectedDate,
+      currentYear: year,
       monthMapping: {
         [year]: {
           [month]: this._mapMonth(props.selectedDate)
@@ -62,6 +64,7 @@ export default class Calendar extends Component {
     const currentYear = dateFns.getYear(currentMonth);
     this.setState({
       currentMonth,
+      currentYear,
       monthMapping: {
         ...this.state.monthMapping,
         [currentYear]: {
@@ -78,6 +81,7 @@ export default class Calendar extends Component {
     const currentYear = dateFns.getYear(currentMonth);
     this.setState({
       currentMonth,
+      currentYear,
       monthMapping: {
         ...this.state.monthMapping,
         [currentYear]: {
@@ -159,12 +163,27 @@ export default class Calendar extends Component {
     );
   }
 
+  renderMonth(styles) {
+    const monthNum = dateFns.getMonth(this.state.currentMonth);
+    const { monthStart, monthEnd } = this.state.monthMapping[this.state.currentYear][monthNum];
+    return (
+      <Month
+        currentMonth={this.state.currentMonth}
+        monthStart={monthStart}
+        monthEnd={monthEnd}
+        selectedDate={this.props.selectedDate}
+      />
+    )
+  }
+
   render() {
     const styles = this.getStyles();
     const header = this.renderHeader(styles);
+    const month = this.renderMonth(styles);
     return (
       <div className='calendar-body'>
         {header}
+        {month}
       </div>
     );
   }
