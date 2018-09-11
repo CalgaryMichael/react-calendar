@@ -7,12 +7,14 @@ export default class Calendar extends Component {
   static propTypes = {
     selectedDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
     headerFormat: PropTypes.string,
-    onDateClick: PropTypes.func.isRequired
+    onDateClick: PropTypes.func.isRequired,
+    style: PropTypes.object
   };
 
   static defaultProps = {
     headerFormat: 'MMMM YYYY',
-    selectedDate: new Date()
+    selectedDate: new Date(),
+    style: {}
   }
 
   constructor(props) {
@@ -53,10 +55,6 @@ export default class Calendar extends Component {
       monthEnd: dateFns.endOfMonth(date),
     }
   }
-
-  onDateClick = (date) => {
-    this.props.onDateClick(date);
-  };
 
   nextMonth = () => {
     const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
@@ -100,12 +98,12 @@ export default class Calendar extends Component {
 
   getStyles() {
     const styles = {};
-    styles.month = {
+    styles.header = {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginRight: '10px',
-      marginLeft: '10px'
+      marginLeft: '10px',
     };
     styles.chevron = {
       cursor: 'pointer'
@@ -115,50 +113,21 @@ export default class Calendar extends Component {
       minWidth: '150px',
       textAlign: 'center'
     }
-    styles.dateHeader = {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '100%',
-      marginTop: '10px',
-      textAlign: 'center'
-    }
     return styles;
   }
 
   renderHeader(styles) {
-    const days = this.renderDaysHeader(styles)
     return (
-      <div className='calendar-header'>
-        <div className='calendar-month' style={styles.month}>
-          <div style={styles.chevron} onClick={this.prevMonth}>
-            <i className='fa fa-chevron-left' />
-          </div>
-          <div style={styles.title}>
-            {dateFns.format(this.state.currentMonth, this.props.headerFormat)}
-          </div>
-          <div style={styles.chevron} onClick={this.nextMonth}>
-            <i className='fa fa-chevron-right' />
-          </div>
+      <div className='calendar-header' style={styles.header}>
+        <div style={styles.chevron} onClick={this.prevMonth}>
+          <i className='fa fa-chevron-left' />
         </div>
-        {days}
-      </div>
-    );
-  }
-
-  renderDaysHeader(styles) {
-    const days = [];
-    const startDate = dateFns.startOfWeek(this.state.currentMonth);
-    for (let i = 0; i < 7; i++) {
-      days.push(
-        <div style={{width: '100%'}} key={i}>
-          {dateFns.format(dateFns.addDays(startDate, i), "dddd")}
+        <div style={styles.title}>
+          {dateFns.format(this.state.currentMonth, this.props.headerFormat)}
         </div>
-      );
-    }
-    return (
-      <div className="calendar-days-header" style={styles.dateHeader}>
-        {days}
+        <div style={styles.chevron} onClick={this.nextMonth}>
+          <i className='fa fa-chevron-right' />
+        </div>
       </div>
     );
   }
@@ -172,6 +141,7 @@ export default class Calendar extends Component {
         monthStart={monthStart}
         monthEnd={monthEnd}
         selectedDate={this.props.selectedDate}
+        onDateClick={this.props.onDateClick}
       />
     )
   }
@@ -181,7 +151,7 @@ export default class Calendar extends Component {
     const header = this.renderHeader(styles);
     const month = this.renderMonth(styles);
     return (
-      <div className='calendar-body'>
+      <div className='calendar-body' style={this.props.style}>
         {header}
         {month}
       </div>
