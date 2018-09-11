@@ -16,9 +16,13 @@ export default class Month extends Component {
   };
 
   getMonthInfo() {
+    const monthStart = dateFns.startOfMonth(this.props.currentMonth);
+    const monthEnd = dateFns.endOfMonth(this.props.currentMonth);
     return {
-      monthStart: dateFns.startOfMonth(this.props.currentMonth),
-      monthEnd: dateFns.endOfMonth(this.props.currentMonth)
+      monthStart,
+      monthEnd,
+      startDate: dateFns.startOfWeek(monthStart),
+      endDate: dateFns.endOfWeek(monthEnd)
     };
   }
 
@@ -46,10 +50,8 @@ export default class Month extends Component {
     return styles;
   }
 
-  generateWeeks(styles) {
-    const { monthStart, monthEnd } = this.getMonthInfo();
-    const startDate = dateFns.startOfWeek(monthStart);
-    const endDate = dateFns.endOfWeek(monthEnd);
+  generateWeeks() {
+    const { monthStart, startDate, endDate } = this.getMonthInfo();
     const weekCount = dateFns.differenceInCalendarWeeks(endDate, startDate);
     let weeks = [];
     for (let weekNum = 0; weekNum <= weekCount; weekNum++) {
@@ -87,7 +89,7 @@ export default class Month extends Component {
   render() {
     const styles = this.getStyles();
     const header = this.renderDaysHeader(styles);
-    const weeks = this.generateWeeks(styles);
+    const weeks = this.generateWeeks();
     return (
       <div className='calendar-month' style={styles.outer}>
         {header}

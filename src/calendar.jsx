@@ -15,7 +15,7 @@ export default class Calendar extends Component {
     headerFormat: 'MMMM YYYY',
     selectedDate: new Date(),
     style: {}
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -72,13 +72,13 @@ export default class Calendar extends Component {
   renderHeader(styles) {
     return (
       <div className='calendar-header' style={styles.header}>
-        <div style={styles.chevron} onClick={this.prevMonth}>
+        <div className='calendar-month-decrement' style={styles.chevron} onClick={this.prevMonth}>
           <i className='fa fa-chevron-left' />
         </div>
-        <div style={styles.title}>
+        <div className='calendar-title' style={styles.title}>
           {dateFns.format(this.state.currentMonth, this.props.headerFormat)}
         </div>
-        <div style={styles.chevron} onClick={this.nextMonth}>
+        <div className='calendar-month-increment' style={styles.chevron} onClick={this.nextMonth}>
           <i className='fa fa-chevron-right' />
         </div>
       </div>

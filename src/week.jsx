@@ -23,7 +23,7 @@ export default class Week extends Component {
     return styles;
   }
 
-  generateDays(styles) {
+  generateDays() {
     let days = [];
     let day = this.props.startDay;
     for (let i = 0; i < 7; i++) {
@@ -43,7 +43,7 @@ export default class Week extends Component {
 
   render() {
     const styles = this.getStyles();
-    const days = this.generateDays(styles);
+    const days = this.generateDays();
     return (
       <div className='calendar-week' style={styles.outer}>
         {days}

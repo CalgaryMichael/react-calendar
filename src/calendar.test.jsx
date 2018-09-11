@@ -1,10 +1,10 @@
 import React from 'react';
-import Calendar from './calendar';
+import Calendar from './calendar.jsx';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import dateFns from 'date-fns';
 
-describe('Calendar Test', () => {
+describe('Calendar Tests', () => {
   describe('Calendar.constructor', () => {
     it('with date provided', () => {
       const selectedDate = new Date(2017, 1, 1);
@@ -73,6 +73,44 @@ describe('Calendar Test', () => {
         currentMonth: new Date(2017, 11, 12),
         currentYear: 2017
       };
+      expect(calendar.state()).toEqual(expectedState);
+    });
+  });
+
+  describe('Calendar.renderHeader', () => {
+    it('title', () => {
+      const selectedDate = new Date(2018, 0, 1);
+      let calendar = shallow(<Calendar selectedDate={selectedDate} />);
+      let title = calendar.find('div.calendar-header').find('div.calendar-title');
+      expect(title.text()).toEqual('January 2018');
+
+      // changes depending on the props
+      calendar = shallow(<Calendar selectedDate={selectedDate} headerFormat={'MMM YY'} />);
+      title = calendar.find('div.calendar-header').find('div.calendar-title');
+      expect(title.text()).toEqual('Jan 18');
+    });
+
+    it('decrement month', () => {
+      const selectedDate = new Date(2018, 0, 1);
+      const calendar = shallow(<Calendar selectedDate={selectedDate} />);
+
+      let expectedState = { currentMonth: selectedDate, currentYear: 2018 };
+      expect(calendar.state()).toEqual(expectedState);
+
+      calendar.find('div.calendar-header').find('div.calendar-month-decrement').simulate('click');
+      expectedState = { currentMonth: new Date(2017, 11, 1), currentYear: 2017 };
+      expect(calendar.state()).toEqual(expectedState);
+    });
+
+    it('increment month', () => {
+      const selectedDate = new Date(2018, 0, 1);
+      const calendar = shallow(<Calendar selectedDate={selectedDate} />);
+
+      let expectedState = { currentMonth: selectedDate, currentYear: 2018 };
+      expect(calendar.state()).toEqual(expectedState);
+
+      calendar.find('div.calendar-header').find('div.calendar-month-increment').simulate('click');
+      expectedState = { currentMonth: new Date(2018, 1, 1), currentYear: 2018 };
       expect(calendar.state()).toEqual(expectedState);
     });
   });
