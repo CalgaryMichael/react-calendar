@@ -31,7 +31,7 @@ export default class Week extends Component {
         <Day
           key={day}
           day={day}
-          month={this.props.monthStart}
+          disabled={!dateFns.isSameMonth(day, this.props.monthStart)}
           selected={dateFns.isSameDay(day, this.props.selectedDate)}
           onClick={this.props.onDateClick}
         />

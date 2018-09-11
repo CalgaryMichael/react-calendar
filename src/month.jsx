@@ -17,6 +17,13 @@ export default class Month extends Component {
     headerFormat: 'ddd'
   };
 
+  getMonths() {
+    return {
+      monthStart: this.props.monthStart || dateFns.startOfMonth(this.props.currentMonth),
+      monthEnd: this.props.monthEnd || dateFns.endOfMonth(this.props.currentMonth)
+    };
+  }
+
   getStyles() {
     const styles = {};
     styles.outer = {
@@ -39,15 +46,8 @@ export default class Month extends Component {
       height: '100%'
     };
     return styles;
-  }
 
-  getMonths() {
-    return {
-      monthStart: this.props.monthStart || dateFns.startOfMonth(this.props.currentMonth),
-      monthEnd: this.props.monthEnd || dateFns.endOfMonth(this.props.currentMonth)
-    };
   }
-
   generateWeeks(styles) {
     const { monthStart, monthEnd } = this.getMonths();
     const startDate = dateFns.startOfWeek(monthStart);

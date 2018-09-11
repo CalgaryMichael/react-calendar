@@ -5,14 +5,15 @@ import dateFns from 'date-fns';
 export default class Day extends Component {
   static propTypes = {
     day: PropTypes.instanceOf(Date).isRequired,
-    month: PropTypes.instanceOf(Date).isRequired,
     onClick: PropTypes.func,
+    disabled: PropTypes.bool,
     selected: PropTypes.bool,
     dateFormat: PropTypes.string
   }
 
   static defaultProps = {
     onClick: () => {},
+    disabled: false,
     selected: false,
     dateFormat: 'D'
   }
@@ -20,13 +21,12 @@ export default class Day extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      disabled: !dateFns.isSameMonth(this.props.day, this.props.month),
       isWeekend: dateFns.isWeekend(this.props.day)
     }
   }
 
   onClick = (e) => {
-    if (!this.state.disabled) {
+    if (!this.props.disabled) {
       this.props.onClick(this.props.day);
     }
   }
@@ -47,7 +47,7 @@ export default class Day extends Component {
     if (this.state.isWeekend) {
       styles.outer.backgroundColor = '#EEEEEE';
     }
-    if (this.state.disabled) {
+    if (this.props.disabled) {
       styles.date.color = '#AAAAAA';
     }
     else if (this.props.selected) {
@@ -61,7 +61,7 @@ export default class Day extends Component {
     if (this.state.isWeekend) {
       className += ' weekend';
     }
-    if (this.state.disabled) {
+    if (this.props.disabled) {
       className += ' disabled'
     }
     else if (this.props.selected) {
