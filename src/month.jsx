@@ -8,11 +8,13 @@ export default class Month extends Component {
     currentMonth: PropTypes.instanceOf(Date).isRequired,
     selectedDate: PropTypes.instanceOf(Date),
     onDateClick: PropTypes.func,
-    headerFormat: PropTypes.string
+    headerFormat: PropTypes.string,
+    style: PropTypes.object
   };
 
   static defaultProps = {
-    headerFormat: 'ddd'
+    headerFormat: 'ddd',
+    style: {}
   };
 
   getMonthInfo() {
@@ -30,7 +32,8 @@ export default class Month extends Component {
     const styles = {};
     styles.outer = {
       width: '100%',
-      height: '100%'
+      height: '100%',
+      ...this.props.style
     };
     styles.dateHeader = {
       display: 'flex',

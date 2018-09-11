@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import BaseCalendar from './base-calendar.jsx';
 import PropTypes from 'prop-types';
 import dateFns from 'date-fns';
 import Month from './month.jsx';
 
 export default class Calendar extends Component {
   static propTypes = {
-    selectedDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
+    selectedDate: PropTypes.instanceOf(Date),
     headerFormat: PropTypes.string,
     onDateClick: PropTypes.func,
     style: PropTypes.object
@@ -23,66 +24,6 @@ export default class Calendar extends Component {
       currentMonth: props.selectedDate,
       currentYear: dateFns.getYear(props.selectedDate)
     };
-  }
-
-  /*
-   *  ===============
-   *    Logic
-   *  ===============
-   */
-
-  nextMonth = () => {
-    const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
-    const currentYear = dateFns.getYear(currentMonth);
-    this.setState({ currentMonth, currentYear });
-  };
-
-  prevMonth = () => {
-    const currentMonth = dateFns.subMonths(this.state.currentMonth, 1);
-    const currentYear = dateFns.getYear(currentMonth);
-    this.setState({ currentMonth, currentYear });
-  };
-
-  /*
-   *  ===============
-   *    Visuals
-   *  ===============
-   */
-
-  getStyles() {
-    const styles = {};
-    styles.header = {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginRight: '10px',
-      marginLeft: '10px',
-    };
-    styles.chevron = {
-      cursor: 'pointer'
-    };
-    styles.title = {
-      width: '50%',
-      minWidth: '150px',
-      textAlign: 'center'
-    }
-    return styles;
-  }
-
-  renderHeader(styles) {
-    return (
-      <div className='calendar-header' style={styles.header}>
-        <div className='calendar-month-decrement' style={styles.chevron} onClick={this.prevMonth}>
-          <i className='fa fa-chevron-left' />
-        </div>
-        <div className='calendar-title' style={styles.title}>
-          {dateFns.format(this.state.currentMonth, this.props.headerFormat)}
-        </div>
-        <div className='calendar-month-increment' style={styles.chevron} onClick={this.nextMonth}>
-          <i className='fa fa-chevron-right' />
-        </div>
-      </div>
-    );
   }
 
   render() {

@@ -1,17 +1,25 @@
 import React from 'react';
-import Calendar from '../src/calendar.jsx';
+import CalendarRange from '../src/calendar-range.jsx';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      beginningDate: null,
+      endDate: null
+    };
+  }
+
+  onDateClick = (beginningDate, endDate) => {
+    this.setState({ beginningDate, endDate });
+  }
+
   render() {
-    const selectedDate = new Date(2018, 1, 2)
     return (
-      <Calendar
-        selectedDate={selectedDate}
-        onDateClick={(date) => {
-          console.log('clicked');
-          console.log(date);
-        }}
-        style={{height: '300px', width: '400px'}}
+      <CalendarRange
+        {...this.state}
+        onDateClick={this.onDateClick}
+        style={{height: '350px', width: '550px'}}
       />
    )
   }
