@@ -7,7 +7,7 @@ export default class Calendar extends Component {
   static propTypes = {
     selectedDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
     headerFormat: PropTypes.string,
-    onDateClick: PropTypes.func.isRequired,
+    onDateClick: PropTypes.func,
     style: PropTypes.object
   };
 
@@ -19,16 +19,9 @@ export default class Calendar extends Component {
 
   constructor(props) {
     super(props);
-    const year = dateFns.getYear(props.selectedDate);
-    const month = dateFns.getMonth(props.selectedDate);
     this.state = {
       currentMonth: props.selectedDate,
-      currentYear: year,
-      monthMapping: {
-        [year]: {
-          [month]: this._mapMonth(props.selectedDate)
-        }
-      }
+      currentYear: dateFns.getYear(props.selectedDate)
     };
   }
 
@@ -38,56 +31,16 @@ export default class Calendar extends Component {
    *  ===============
    */
 
-  mapMonth = (date) => {
-    const year = dateFns.getYear(date);
-    const month = dateFns.getMonth(date);
-    if (this.state.monthMapping[year] && this.state.monthMapping[year][month]) {
-      return this.state.monthMapping[year][month];
-    }
-    else {
-      return this._mapMonth(date);
-    }
-  };
-
-  _mapMonth = (date) => {
-    return {
-      monthStart: dateFns.startOfMonth(date),
-      monthEnd: dateFns.endOfMonth(date),
-    }
-  }
-
   nextMonth = () => {
     const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
-    const monthNum = dateFns.getMonth(currentMonth);
     const currentYear = dateFns.getYear(currentMonth);
-    this.setState({
-      currentMonth,
-      currentYear,
-      monthMapping: {
-        ...this.state.monthMapping,
-        [currentYear]: {
-          ...this.state.monthMapping[currentYear],
-          [monthNum]: this.mapMonth(currentMonth)
-        }
-      }
-    });
+    this.setState({ currentMonth, currentYear });
   };
 
   prevMonth = () => {
     const currentMonth = dateFns.subMonths(this.state.currentMonth, 1);
-    const monthNum = dateFns.getMonth(currentMonth);
     const currentYear = dateFns.getYear(currentMonth);
-    this.setState({
-      currentMonth,
-      currentYear,
-      monthMapping: {
-        ...this.state.monthMapping,
-        [currentYear]: {
-          ...this.state.monthMapping[currentYear],
-          [monthNum]: this.mapMonth(currentMonth)
-        }
-      }
-    });
+    this.setState({ currentMonth, currentYear });
   };
 
   /*
@@ -132,28 +85,17 @@ export default class Calendar extends Component {
     );
   }
 
-  renderMonth(styles) {
-    const monthNum = dateFns.getMonth(this.state.currentMonth);
-    const { monthStart, monthEnd } = this.state.monthMapping[this.state.currentYear][monthNum];
-    return (
-      <Month
-        currentMonth={this.state.currentMonth}
-        monthStart={monthStart}
-        monthEnd={monthEnd}
-        selectedDate={this.props.selectedDate}
-        onDateClick={this.props.onDateClick}
-      />
-    )
-  }
-
   render() {
     const styles = this.getStyles();
     const header = this.renderHeader(styles);
-    const month = this.renderMonth(styles);
     return (
       <div className='calendar-body' style={this.props.style}>
         {header}
-        {month}
+        <Month
+          currentMonth={this.state.currentMonth}
+          selectedDate={this.props.selectedDate}
+          onDateClick={this.props.onDateClick}
+        />
       </div>
     );
   }

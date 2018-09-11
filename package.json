@@ -9,7 +9,10 @@
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>setupTests.js",
-    "moduleFileExtensions": ["js", "jsx"]
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ]
   },
   "repository": {
     "type": "git",
@@ -44,6 +47,7 @@
     "html-webpack-plugin": "^2.30.1",
     "jest": "^23.5.0",
     "react-test-renderer": "^16.5.0",
+    "sinon": "^6.2.0",
     "webpack": "^3.7.1",
     "webpack-dev-server": "^2.9.2"
   }

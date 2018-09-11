@@ -1,63 +1,44 @@
 import React from 'react';
 import Calendar from './calendar';
-import { shallow, mount } from 'enzyme';
+import sinon from 'sinon';
+import { shallow } from 'enzyme';
+import dateFns from 'date-fns';
 
 describe('Calendar Test', () => {
-  describe('Calendar.mapMonth', () => {
-    it('new mapping', () => {
-      const props = {
-        selectedDate: new Date(2017, 1, 1),
-        onDateClick: () => {}
-      }
-      const calendar = new Calendar(props);
-      const received = calendar.mapMonth(new Date(2018, 0, 12));
+  describe('Calendar.constructor', () => {
+    it('with date provided', () => {
+      const selectedDate = new Date(2017, 1, 1);
+      const props = { selectedDate };
+      const calendar = shallow(<Calendar {...props} />);
 
-      expect(received.monthStart).toEqual(new Date(2018, 0, 1, 0, 0, 0));
-      expect(received.monthEnd).toEqual(new Date(2018, 0, 31, 23, 59, 59, 999));
+      const expectedState = {
+        currentMonth: selectedDate,
+        currentYear: 2017
+      };
+      expect(calendar.state()).toEqual(expectedState);
     });
 
-    it('old mapping', () => {
-      // pulls from the state if we already have the mapping
-      const props = {
-        selectedDate: new Date(2017, 1, 1),
-        onDateClick: () => {}
-      }
-      const calendar = new Calendar(props);
+    it('without date provided', () => {
+      const mockToday = new Date(2017, 1, 1);
+      const calendar = shallow(<Calendar />);
 
-      const expectedStart = 'this if a fake start date';
-      const expectedEnd = 'this is a fake end date';
-      calendar.state.monthMapping = {
-        2018: {
-          0: { monthStart: expectedStart, monthEnd: expectedEnd }
-        }
-      }
-
-      const received = calendar.mapMonth(new Date(2018, 0, 12));
-      expect(received.monthStart).toEqual(expectedStart);
-      expect(received.monthEnd).toEqual(expectedEnd);
+      const expectedDate = new Date();
+      const actualState = calendar.state();
+      expect(dateFns.getDate(actualState.currentMonth)).toEqual(dateFns.getDate(expectedDate))
+      expect(actualState.currentYear).toEqual(dateFns.getYear(expectedDate));
     });
   });
 
   describe('Calendar.nextMonth', () => {
     it('simple', () => {
       const selectedDate = new Date(2018, 0, 12);
-      const props = {
-        selectedDate,
-        onDateClick: () => {}
-      };
+      const props = { selectedDate };
 
       // starting state
       const calendar = shallow(<Calendar {...props} />);
       const startingState = {
         currentMonth: selectedDate,
-        monthMapping: {
-          '2018': {
-            '0': {
-              monthStart: new Date(2018, 0, 1),
-              monthEnd: new Date(2018, 0, 31, 23, 59, 59, 999)
-            }
-          }
-        }
+        currentYear: 2018
       }
       expect(calendar.state()).toEqual(startingState);
 
@@ -66,16 +47,7 @@ describe('Calendar Test', () => {
       const expectedState = {
         ...startingState,
         currentMonth: new Date(2018, 1, 12),
-        monthMapping: {
-          ...startingState.monthMapping,
-          '2018': {
-            ...startingState.monthMapping['2018'],
-            '1': {
-              monthStart: new Date(2018, 1, 1),
-              monthEnd: new Date(2018, 1, 28, 23, 59, 59, 999)
-            }
-          }
-        }
+        currentYear: 2018
       };
       expect(calendar.state()).toEqual(expectedState);
     });
@@ -84,23 +56,13 @@ describe('Calendar Test', () => {
   describe('Calendar.prevMonth', () => {
     it('simple', () => {
       const selectedDate = new Date(2018, 0, 12);
-      const props = {
-        selectedDate,
-        onDateClick: () => {}
-      };
+      const props = { selectedDate };
 
       // starting state
       const calendar = shallow(<Calendar {...props} />);
       const startingState = {
         currentMonth: selectedDate,
-        monthMapping: {
-          '2018': {
-            '0': {
-              monthStart: new Date(2018, 0, 1),
-              monthEnd: new Date(2018, 0, 31, 23, 59, 59, 999)
-            }
-          }
-        }
+        currentYear: 2018
       }
       expect(calendar.state()).toEqual(startingState);
 
@@ -109,15 +71,7 @@ describe('Calendar Test', () => {
       const expectedState = {
         ...startingState,
         currentMonth: new Date(2017, 11, 12),
-        monthMapping: {
-          ...startingState.monthMapping,
-          '2017': {
-            '11': {
-              monthStart: new Date(2017, 11, 1),
-              monthEnd: new Date(2017, 11, 31, 23, 59, 59, 999)
-            }
-          }
-        }
+        currentYear: 2017
       };
       expect(calendar.state()).toEqual(expectedState);
     });

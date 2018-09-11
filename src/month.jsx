@@ -6,8 +6,6 @@ import Week from './week.jsx';
 export default class Month extends Component {
   static propTypes = {
     currentMonth: PropTypes.instanceOf(Date).isRequired,
-    monthStart: PropTypes.instanceOf(Date),
-    monthEnd: PropTypes.instanceOf(Date),
     selectedDate: PropTypes.instanceOf(Date),
     onDateClick: PropTypes.func,
     headerFormat: PropTypes.string
@@ -17,10 +15,10 @@ export default class Month extends Component {
     headerFormat: 'ddd'
   };
 
-  getMonths() {
+  getMonthInfo() {
     return {
-      monthStart: this.props.monthStart || dateFns.startOfMonth(this.props.currentMonth),
-      monthEnd: this.props.monthEnd || dateFns.endOfMonth(this.props.currentMonth)
+      monthStart: dateFns.startOfMonth(this.props.currentMonth),
+      monthEnd: dateFns.endOfMonth(this.props.currentMonth)
     };
   }
 
@@ -46,10 +44,10 @@ export default class Month extends Component {
       height: '100%'
     };
     return styles;
-
   }
+
   generateWeeks(styles) {
-    const { monthStart, monthEnd } = this.getMonths();
+    const { monthStart, monthEnd } = this.getMonthInfo();
     const startDate = dateFns.startOfWeek(monthStart);
     const endDate = dateFns.endOfWeek(monthEnd);
     const weekCount = dateFns.differenceInCalendarWeeks(endDate, startDate);
