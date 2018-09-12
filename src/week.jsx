@@ -8,7 +8,12 @@ export default class Week extends Component {
     startDate: PropTypes.instanceOf(Date),
     monthStart: PropTypes.instanceOf(Date),
     selectedDate: PropTypes.instanceOf(Date),
-    onDateClick: PropTypes.func
+    onDateClick: PropTypes.func,
+    showDisabledDates: PropTypes.bool
+  }
+
+  static defaultProps = {
+    showDisabledDates: true
   }
 
   getStyles() {
@@ -34,6 +39,7 @@ export default class Week extends Component {
           disabled={!dateFns.isSameMonth(day, this.props.monthStart)}
           selected={dateFns.isSameDay(day, this.props.selectedDate)}
           onClick={this.props.onDateClick}
+          showDisabled={this.props.showDisabledDates}
         />
       );
       day = dateFns.addDays(day, 1);

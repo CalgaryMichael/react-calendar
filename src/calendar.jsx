@@ -4,18 +4,20 @@ import PropTypes from 'prop-types';
 import dateFns from 'date-fns';
 import Month from './month.jsx';
 
-export default class Calendar extends Component {
+export default class Calendar extends BaseCalendar {
   static propTypes = {
     selectedDate: PropTypes.instanceOf(Date),
     headerFormat: PropTypes.string,
     onDateClick: PropTypes.func,
-    style: PropTypes.object
+    style: PropTypes.object,
+    showDisabledDates: PropTypes.bool
   };
 
   static defaultProps = {
     headerFormat: 'MMMM YYYY',
     selectedDate: new Date(),
-    style: {}
+    style: {},
+    showDisabledDates: true
   };
 
   constructor(props) {
@@ -36,6 +38,7 @@ export default class Calendar extends Component {
           currentMonth={this.state.currentMonth}
           selectedDate={this.props.selectedDate}
           onDateClick={this.props.onDateClick}
+          showDisabledDates={this.props.showDisabledDates}
         />
       </div>
     );

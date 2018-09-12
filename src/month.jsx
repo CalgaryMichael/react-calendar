@@ -9,12 +9,14 @@ export default class Month extends Component {
     selectedDate: PropTypes.instanceOf(Date),
     onDateClick: PropTypes.func,
     headerFormat: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    showDisabledDates: PropTypes.bool
   };
 
   static defaultProps = {
     headerFormat: 'ddd',
-    style: {}
+    style: {},
+    showDisabledDates: true
   };
 
   getMonthInfo() {
@@ -66,6 +68,7 @@ export default class Month extends Component {
           monthStart={monthStart}
           selectedDate={this.props.selectedDate}
           onDateClick={this.props.onDateClick}
+          showDisabledDates={this.props.showDisabledDates}
         />
       );
     }

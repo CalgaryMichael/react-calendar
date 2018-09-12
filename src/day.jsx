@@ -7,6 +7,7 @@ export default class Day extends Component {
     day: PropTypes.instanceOf(Date).isRequired,
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
+    showDisabled: PropTypes.bool,
     selected: PropTypes.bool,
     dateFormat: PropTypes.string
   }
@@ -14,6 +15,7 @@ export default class Day extends Component {
   static defaultProps = {
     onClick: () => {},
     disabled: false,
+    showDisabled: true,
     selected: false,
     dateFormat: 'D'
   }
@@ -48,7 +50,14 @@ export default class Day extends Component {
       styles.outer.backgroundColor = '#EEEEEE';
     }
     if (this.props.disabled) {
-      styles.date.color = '#AAAAAA';
+      if (!this.props.showDisabled) {
+        styles.outer.border = 'none';
+        styles.outer.backgroundColor = 'none';
+        styles.date.display = 'none';
+      }
+      else {
+        styles.date.color = '#AAAAAA';
+      }
     }
     else if (this.props.selected) {
       styles.date.color = 'red';
