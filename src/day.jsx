@@ -60,7 +60,8 @@ export default class Day extends Component {
       justifyContent: 'flex-start',
       border: '0.5px solid #CCCCCC',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      cursor: 'pointer'
     };
     styles.date = {
       fontWeight: 400,

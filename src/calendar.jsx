@@ -28,6 +28,10 @@ export default class Calendar extends BaseCalendar {
     };
   }
 
+  isDateSelected = (day) => {
+    return dateFns.isSameDay(day, this.props.selectedDate);
+  }
+
   render() {
     const styles = this.getStyles();
     const header = this.renderHeader(styles);
@@ -36,7 +40,7 @@ export default class Calendar extends BaseCalendar {
         {header}
         <Month
           currentMonth={this.state.currentMonth}
-          selectedDate={this.props.selectedDate}
+          isDateSelected={this.isDateSelected}
           onDateClick={this.props.onDateClick}
           showDisabledDates={this.props.showDisabledDates}
         />
