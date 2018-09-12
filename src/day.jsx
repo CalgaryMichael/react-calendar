@@ -6,6 +6,8 @@ export default class Day extends Component {
   static propTypes = {
     day: PropTypes.instanceOf(Date).isRequired,
     onClick: PropTypes.func,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
     disabled: PropTypes.bool,
     showDisabled: PropTypes.bool,
     selected: PropTypes.bool,
@@ -14,6 +16,8 @@ export default class Day extends Component {
 
   static defaultProps = {
     onClick: () => {},
+    onMouseEnter: () => {},
+    onMouseLeave: () => {},
     disabled: false,
     showDisabled: true,
     selected: false,
@@ -23,7 +27,8 @@ export default class Day extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isWeekend: dateFns.isWeekend(this.props.day)
+      isWeekend: dateFns.isWeekend(this.props.day),
+      hovered: false
     }
   }
 
@@ -31,7 +36,21 @@ export default class Day extends Component {
     if (!this.props.disabled) {
       this.props.onClick(this.props.day);
     }
-  }
+  };
+
+  onMouseEnter = (e) => {
+    if (!this.props.disabled) {
+      this.setState({ hovered: true });
+      this.props.onMouseEnter(this.props.day);
+    }
+  };
+
+  onMouseLeave = (e) => {
+    if (!this.props.disabled) {
+      this.setState({ hovered: false });
+      this.props.onMouseLeave(this.props.day);
+    }
+  };
 
   getStyles() {
     const styles = {};
@@ -62,6 +81,9 @@ export default class Day extends Component {
     else if (this.props.selected) {
       styles.date.color = 'red';
     }
+    else if (this.state.hovered) {
+      styles.date.color = '#888888';
+    }
     return styles;
   }
 
@@ -84,7 +106,13 @@ export default class Day extends Component {
     const className = this.getClassName();
     const formattedDate = dateFns.format(this.props.day, this.props.dateFormat)
     return (
-      <div className={className} style={styles.outer} onClick={this.onClick}>
+      <div
+        className={className}
+        style={styles.outer}
+        onClick={this.onClick}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+      >
         <span className='calendar-day-number' style={styles.date}>{formattedDate}</span>
       </div>
     );
