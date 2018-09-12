@@ -8,9 +8,10 @@ describe('Week Tests', () => {
   describe('Week.generateDays', () => {
     it('simple', () => {
       const props = {
+        ...Week.defaultProps,
         startDay: new Date(2017, 11, 31),
         monthStart: new Date(2018, 0, 1),
-        selectedDate: new Date(2018, 0, 1)
+        isDateSelected: (day) => dateFns.isSameDay(day, new Date(2018, 0, 1))
       };
       const week = new Week(props);
       const days = week.generateDays();

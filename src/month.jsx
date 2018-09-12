@@ -6,8 +6,10 @@ import Week from './week.jsx';
 export default class Month extends Component {
   static propTypes = {
     currentMonth: PropTypes.instanceOf(Date).isRequired,
-    selectedDates: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
+    isDateSelected: PropTypes.func,
+    isDateInRange: PropTypes.func,
     onDateClick: PropTypes.func,
+    onDateMouseEnter: PropTypes.func,
     headerFormat: PropTypes.string,
     style: PropTypes.object,
     showDisabledDates: PropTypes.bool
@@ -66,8 +68,10 @@ export default class Month extends Component {
           key={weekNum}
           startDay={day}
           monthStart={monthStart}
-          selectedDates={this.props.selectedDates}
+          isDateSelected={this.props.isDateSelected}
+          isDateInRange={this.props.isDateInRange}
           onDateClick={this.props.onDateClick}
+          onDateMouseEnter={this.props.onDateMouseEnter}
           showDisabledDates={this.props.showDisabledDates}
         />
       );

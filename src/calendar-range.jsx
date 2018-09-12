@@ -42,14 +42,18 @@ export default class CalendarRange extends BaseCalendar {
       // if we have a beginning date but no end date,
       // then we know they have set the range
       if (dateFns.differenceInCalendarDays(day, this.state.beginningDate) > 0) {
-        this.setState({ endDate: day });
+        this.setState({ endDate: day, hoveredDate: null });
         this.props.onDateClick(this.state.beginningDate, day);
       }
       else {
         // they chose a date older than the beginning date,
         // we assume that this is still the range that they want,
         // so we flip the beginning and the end date
-        this.setState({ beginningDate: day, endDate: this.state.beginningDate });
+        this.setState({
+          beginningDate: day,
+          endDate: this.state.beginningDate,
+          hoveredDate: null
+        });
         this.props.onDateClick(day, this.state.beginningDate);
       }
     }
@@ -63,18 +67,26 @@ export default class CalendarRange extends BaseCalendar {
         }
         else {
           // if its too far away, we assume they want to create a new range
-          this.setState({ beginningDate: day, endDate: null });
+          this.setState({
+            beginningDate: day,
+            endDate: null,
+            hoveredDate: null
+          });
           this.props.onDateClick(day, null);
         }
       }
       else if (dateFns.compareAsc(day, this.state.endDate) === 1) {
         if (Math.abs(dateFns.differenceInCalendarDays(day, this.state.endDate)) < 3) {
-          this.setState({ endDate: day });
+          this.setState({ endDate: day, hoeveredDate: null });
           this.props.onDateClick(this.state.beginningDate, day);
         }
         else {
           // if its too far away, we assume they want to create a new range
-          this.setState({ beginningDate: day, endDate: null });
+          this.setState({
+            beginningDate: day,
+            endDate: null,
+            hoveredDate: null
+          });
           this.props.onDateClick(day, null);
         }
       }
@@ -85,18 +97,51 @@ export default class CalendarRange extends BaseCalendar {
         if (Math.abs(dateFns.differenceInCalendarDays(day, selectedArray[closestIndex])) < 3) {
           const selected = {
             beginningDate: closestIndex === 0 ? day : selectedArray[0],
-            endDate: closestIndex === 1 ? day : selectedArray[1]
+            endDate: closestIndex === 1 ? day : selectedArray[1],
+            hoveredDate: null
           };
           this.setState({...selected});
           this.props.onDateClick(selected.beginningDate, selected.endDate);
         }
         else {
           // if its too far away, we assume they want to create a new range
-          this.setState({ beginningDate: day, endDate: null });
+          this.setState({
+            beginningDate: day,
+            endDate: null,
+            hoveredDate: null
+          });
           this.props.onDateClick(day, null);
         }
       }
     }
+  }
+
+  onDateMouseEnter = (day) => {
+    if (this.state.beginningDate && !this.state.endDate) {
+      this.setState({ hoveredDate: day });
+    }
+  }
+
+  isDateSelected = (day) => {
+    return dateFns.isSameDay(day, this.state.beginningDate) || dateFns.isSameDay(day, this.state.endDate);
+  }
+
+  isDateInRange = (day) => {
+    if (this.state.beginningDate) {
+      if (this.state.endDate) {
+        return dateFns.isWithinRange(day, this.state.beginningDate, this.state.endDate)
+      }
+      else if (this.state.hoveredDate) {
+        const isSameDay = dateFns.isSameDay(day, this.state.hoveredDate);
+        if (dateFns.differenceInCalendarDays(this.state.hoveredDate, this.state.beginningDate) < 0) {
+          return isSameDay || dateFns.isWithinRange(day, this.state.hoveredDate, this.state.beginningDate);
+        }
+        else {
+          return isSameDay || dateFns.isWithinRange(day, this.state.beginningDate, this.state.hoveredDate);
+        }
+      }
+    }
+    return false;
   }
 
   getNextMonth = () => {
@@ -141,8 +186,10 @@ export default class CalendarRange extends BaseCalendar {
             <div className='calendar-title'>{dateFns.format(this.state.currentMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={this.state.currentMonth}
-              selectedDates={[this.state.beginningDate, this.state.endDate]}
+              isDateSelected={this.isDateSelected}
+              isDateInRange={this.isDateInRange}
               onDateClick={this.onDateClick}
+              onDateMouseEnter={this.onDateMouseEnter}
               showDisabledDates={this.props.showDisabledDates}
             />
           </div>
@@ -150,8 +197,10 @@ export default class CalendarRange extends BaseCalendar {
             <div className='calendar-title'>{dateFns.format(nextMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={nextMonth}
-              selectedDates={[this.state.beginningDate, this.state.endDate]}
+              isDateSelected={this.isDateSelected}
+              isDateInRange={this.isDateInRange}
               onDateClick={this.onDateClick}
+              onDateMouseEnter={this.onDateMouseEnter}
               showDisabledDates={this.props.showDisabledDates}
             />
           </div>

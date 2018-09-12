@@ -227,4 +227,86 @@ describe('CalendarRange Tests', () => {
       });
     });
   });
+
+  describe('CalendarRange.isDateInRange', () => {
+    it('no selected dates', () => {
+      const state = {
+        beginningDate: null,
+        endDate: null,
+        hoveredDate: null
+      };
+      const calendar = new CalendarRange({});
+      calendar.state = state;
+
+      const day = new Date(2018, 0, 5);
+      expect(calendar.isDateInRange(day)).toBe(false);
+    });
+
+    it('both selected dates', () => {
+      const state = {
+        beginningDate: new Date(2018, 0, 1),
+        endDate: new Date(2018, 0, 10),
+        hoveredDate: null
+      };
+      const calendar = new CalendarRange({});
+      calendar.state = state;
+
+      const day = new Date(2018, 0, 5);
+      expect(calendar.isDateInRange(day)).toBe(true);
+    });
+
+    describe('beginning date selected', () => {
+      it('same as end range', () => {
+        const day = new Date(2018, 0, 5);
+        const state = {
+          beginningDate: new Date(2018, 0, 1),
+          endDate: null,
+          hoveredDate: day
+        };
+        const calendar = new CalendarRange({});
+        calendar.state = state;
+
+        expect(calendar.isDateInRange(day)).toBe(true);
+      });
+
+      it('between beginning date and end range', () => {
+        const state = {
+          beginningDate: new Date(2018, 0, 1),
+          endDate: null,
+          hoveredDate: new Date(2018, 0, 10)
+        };
+        const calendar = new CalendarRange({});
+        calendar.state = state;
+
+        const day = new Date(2018, 0, 5);
+        expect(calendar.isDateInRange(day)).toBe(true);
+      });
+
+      it('after end range', () => {
+        const state = {
+          beginningDate: new Date(2018, 0, 1),
+          endDate: null,
+          hoveredDate: new Date(2018, 0, 10)
+        };
+        const calendar = new CalendarRange({});
+        calendar.state = state;
+
+        const day = new Date(2018, 0, 15);
+        expect(calendar.isDateInRange(day)).toBe(false);
+      });
+
+      it('before beginning date and end range', () => {
+        const state = {
+          beginningDate: new Date(2018, 0, 1),
+          endDate: null,
+          hoveredDate: new Date(2018, 0, 10)
+        };
+        const calendar = new CalendarRange({});
+        calendar.state = state;
+
+        const day = new Date(2017, 11, 15);
+        expect(calendar.isDateInRange(day)).toBe(false);
+      });
+    });
+  });
 });
