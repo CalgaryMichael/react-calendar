@@ -19,14 +19,14 @@ describe('Day Tests', () => {
       weekendStub.returns(false);
       const props = {day: new Date(2018, 1, 1)};
       const day = new Day(props);
-      expect(day.state).toEqual({ isWeekend: false });
+      expect(day.state).toEqual({ isWeekend: false, hovered: false });
     });
 
     it('is a weekend', () => {
       weekendStub.returns(true);
       const props = {day: new Date(2018, 1, 1)};
       const day = new Day(props);
-      expect(day.state).toEqual({ isWeekend: true });
+      expect(day.state).toEqual({ isWeekend: true, hovered: false });
     });
   });
 
@@ -55,6 +55,7 @@ describe('Day Tests', () => {
       const props = {
         day: new Date(2018, 1, 1),
         disabled: true,
+        showDisabled: true,
         selected: false
       };
       const day = new Day(props);
@@ -65,6 +66,7 @@ describe('Day Tests', () => {
       const props = {
         day: new Date(2018, 1, 1),
         disabled: false,
+        showDisabled: true,
         selected: true
       };
       const day = new Day(props);
@@ -75,6 +77,7 @@ describe('Day Tests', () => {
       const props = {
         day: new Date(2018, 1, 1),
         disabled: true,
+        showDisabled: true,
         selected: true
       };
       const day = new Day(props);
