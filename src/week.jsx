@@ -7,7 +7,8 @@ export default class Week extends Component {
   static propTypes = {
     startDate: PropTypes.instanceOf(Date),
     monthStart: PropTypes.instanceOf(Date),
-    selectedDate: PropTypes.instanceOf(Date),
+    selectedDates: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
+    endRangeDate: PropTypes.instanceOf(Date),
     onDateClick: PropTypes.func,
     showDisabledDates: PropTypes.bool
   }
@@ -28,6 +29,22 @@ export default class Week extends Component {
     return styles;
   }
 
+  isDaySelected = (day) => {
+    return this.props.selectedDates.some((selected) => dateFns.isSameDay(day, selected));
+  }
+
+  isDayInRange = (day) => {
+    if (this.props.selectedDates[0]) {
+      if (this.props.selectedDates[1]) {
+        return dateFns.isWithinRange(day, this.props.selectedDates[0], this.props.selectedDates[1])
+      }
+      else if (this.props.endDateRange) {
+        return dateFns.isWithinRange(day, this.props.selectedDates[0], this.props.endRangeDate)
+      }
+    }
+    return false;
+  }
+
   generateDays() {
     let days = [];
     let day = this.props.startDay;
@@ -37,7 +54,8 @@ export default class Week extends Component {
           key={day}
           day={day}
           disabled={!dateFns.isSameMonth(day, this.props.monthStart)}
-          selected={dateFns.isSameDay(day, this.props.selectedDate)}
+          selected={this.isDaySelected(day)}
+          inRange={this.isDayInRange(day)}
           onClick={this.props.onDateClick}
           showDisabled={this.props.showDisabledDates}
         />

@@ -11,6 +11,7 @@ export default class Day extends Component {
     disabled: PropTypes.bool,
     showDisabled: PropTypes.bool,
     selected: PropTypes.bool,
+    inRange: PropTypes.bool,
     dateFormat: PropTypes.string
   }
 
@@ -62,7 +63,7 @@ export default class Day extends Component {
       height: '100%'
     };
     styles.date = {
-      fontWeight: 600,
+      fontWeight: 400,
       margin: '5px'
     };
     if (this.state.isWeekend) {
@@ -79,7 +80,10 @@ export default class Day extends Component {
       }
     }
     else if (this.props.selected) {
-      styles.date.color = 'red';
+      styles.outer.backgroundColor = '#FFE0B2';
+    }
+    else if (this.props.inRange) {
+      styles.outer.backgroundColor = '#FFF3E0';
     }
     else if (this.state.hovered) {
       styles.date.color = '#888888';
@@ -97,6 +101,9 @@ export default class Day extends Component {
     }
     else if (this.props.selected) {
       className += ' selected';
+    }
+    else if (this.props.inRange) {
+      className += ' in-range'
     }
     return className;
   }
