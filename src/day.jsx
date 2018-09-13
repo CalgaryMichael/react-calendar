@@ -12,7 +12,9 @@ export default class Day extends Component {
     showDisabled: PropTypes.bool,
     selected: PropTypes.bool,
     inRange: PropTypes.bool,
-    dateFormat: PropTypes.string
+    higlightWeekend: PropTypes.bool,
+    dateFormat: PropTypes.string,
+    style: PropTypes.object
   }
 
   static defaultProps = {
@@ -22,7 +24,9 @@ export default class Day extends Component {
     disabled: false,
     showDisabled: true,
     selected: false,
-    dateFormat: 'D'
+    highLightWeekend: false,
+    dateFormat: 'D',
+    style: {}
   }
 
   constructor(props) {
@@ -56,18 +60,19 @@ export default class Day extends Component {
   getStyles() {
     const styles = {};
     styles.outer = {
-      display: 'flex',
-      justifyContent: 'flex-start',
-      border: '0.5px solid #CCCCCC',
-      width: '100%',
-      height: '100%',
-      cursor: 'pointer'
+      borderWidth: '0.5px',
+      borderStyle: 'solid',
+      borderColor: '#e4e7e7',
+      boxSizing: 'border-box',
+      cursor: 'pointer',
+      padding: 0,
+      ...this.props.style
     };
     styles.date = {
       fontWeight: 400,
       margin: '5px'
     };
-    if (this.state.isWeekend) {
+    if (this.state.isWeekend && this.props.higlightWeekend) {
       styles.outer.backgroundColor = '#EEEEEE';
     }
     if (this.props.disabled) {
@@ -87,7 +92,7 @@ export default class Day extends Component {
       styles.outer.backgroundColor = '#FFF3E0';
     }
     else if (this.state.hovered) {
-      styles.date.color = '#888888';
+      styles.outer.backgroundColor = '#e4e7e7';
     }
     return styles;
   }
@@ -114,15 +119,15 @@ export default class Day extends Component {
     const className = this.getClassName();
     const formattedDate = dateFns.format(this.props.day, this.props.dateFormat)
     return (
-      <div
-        className={className}
-        style={styles.outer}
-        onClick={this.onClick}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-      >
+        <td
+          className={className}
+          style={styles.outer}
+          onClick={this.onClick}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+        >
         <span className='calendar-day-number' style={styles.date}>{formattedDate}</span>
-      </div>
+      </td>
     );
   }
 }

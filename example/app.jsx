@@ -1,5 +1,5 @@
 import React from 'react';
-import Calendar from '../src/calendar.jsx';
+import CalendarRange from '../src/calendar-range.jsx';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -11,17 +11,17 @@ export default class App extends React.Component {
     };
   }
 
-  onDateClick = (selectedDate) => {
-    this.setState({ selectedDate });
+  onDateClick = (beginningDate, endDate) => {
+    this.setState({ beginningDate, endDate });
   }
 
   render() {
     return (
-      <Calendar
+      <CalendarRange
         {...this.state}
         onDateClick={this.onDateClick}
-        style={{height: '550px', width: '750px'}}
-        showDisabledDates={true}
+        style={{height: '250px', width: '650px'}}
+        showDisabledDates={false}
       />
    )
   }

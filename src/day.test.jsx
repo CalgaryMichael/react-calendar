@@ -31,14 +31,32 @@ describe('Day Tests', () => {
   });
 
   describe('Day.getStyles', () => {
-    it('weekend', () => {
-      const props = {day: new Date(2018, 1, 1)};
-      const day = new Day(props);
-      day.state.isWeekend = false;
-      expect(day.getStyles().outer.backgroundColor).toBe(undefined);
+    describe('weekend', () => {
+      it('without highlighted weekends', () => {
+        const props = {
+          day: new Date(2018, 1, 1),
+          higlightWeekend: false
+        };
+        const day = new Day(props);
+        day.state.isWeekend = false;
+        expect(day.getStyles().outer.backgroundColor).toBe(undefined);
 
-      day.state.isWeekend = true;
-      expect(day.getStyles().outer.backgroundColor).toBe('#EEEEEE');
+        day.state.isWeekend = true;
+        expect(day.getStyles().outer.backgroundColor).toBe(undefined);
+      });
+
+      it('with highlighted weekends', () => {
+        const props = {
+          day: new Date(2018, 1, 1),
+          higlightWeekend: true
+        };
+        const day = new Day(props);
+        day.state.isWeekend = false;
+        expect(day.getStyles().outer.backgroundColor).toBe(undefined);
+
+        day.state.isWeekend = true;
+        expect(day.getStyles().outer.backgroundColor).toBe('#EEEEEE');
+      });
     });
 
     it('is not disabled', () => {
@@ -89,7 +107,7 @@ describe('Day Tests', () => {
       };
       const day = new Day(props);
       day.state.hovered = true;
-      expect(day.getStyles().date.color).toBe('#888888');
+      expect(day.getStyles().outer.backgroundColor).toBe('#e4e7e7');
     });
 
     it('is hovered and disabled', () => {

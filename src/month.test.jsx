@@ -47,7 +47,7 @@ describe('Month Tests', () => {
         headerFormat: Month.defaultProps.headerFormat
       };
       const month = shallow(<Month {...props} />);
-      const header = month.find('div.calendar-days-header');
+      const header = month.find('tr.calendar-days-header');
 
       expect(header.children().length).toBe(7);
       expect(header.children().first().text()).toBe('Sun');

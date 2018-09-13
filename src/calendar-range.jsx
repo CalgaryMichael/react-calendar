@@ -159,30 +159,51 @@ export default class CalendarRange extends BaseCalendar {
 
   getStyles() {
     const styles = super.getStyles();
-    styles.title.display = 'none';  // hide original title
+    styles.chevron.position = 'absolute';
+    styles.chevronLeft = {
+      ...styles.chevron,
+      left: '10px'
+    };
+    styles.chevronRight = {
+      ...styles.chevron,
+      right: '10px'
+    };
     styles.months = {
       display: 'flex',
-      flexDirection: 'row'
-    }
-    styles.month = {
+      flexDirection: 'row',
+      position: 'relative',
+      width: '100%',
+      height: '100%'
+    };
+    styles.monthOuter = {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       width: '100%',
       height: '100%'
+    };
+    styles.month = {
+      width: 'unset',
+      height: 'unset'
+    }
+    styles.day = {
+      width: '40px',
+      height: '40px',
+      textAlign: 'center'
     }
     return styles;
   }
 
   render() {
     const styles = this.getStyles();
-    const header = this.renderHeader(styles);
     const nextMonth = this.getNextMonth();
     return (
       <div style={this.props.style}>
-        {header}
         <div className='calendar-months' style={styles.months}>
-          <div style={{...styles.month, marginRight: '15px'}}>
+          <div style={styles.monthOuter}>
+            <div className='calendar-month-decrement' style={styles.chevronLeft} onClick={this.prevMonth}>
+              <i className='fa fa-chevron-left' />
+            </div>
             <div className='calendar-title'>{dateFns.format(this.state.currentMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={this.state.currentMonth}
@@ -191,9 +212,14 @@ export default class CalendarRange extends BaseCalendar {
               onDateClick={this.onDateClick}
               onDateMouseEnter={this.onDateMouseEnter}
               showDisabledDates={this.props.showDisabledDates}
+              style={styles.month}
+              dayStyle={styles.day}
             />
           </div>
-          <div style={styles.month}>
+          <div style={styles.monthOuter}>
+            <div className='calendar-month-increment' style={styles.chevronRight} onClick={this.nextMonth}>
+              <i className='fa fa-chevron-right' />
+            </div>
             <div className='calendar-title'>{dateFns.format(nextMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={nextMonth}
@@ -202,6 +228,8 @@ export default class CalendarRange extends BaseCalendar {
               onDateClick={this.onDateClick}
               onDateMouseEnter={this.onDateMouseEnter}
               showDisabledDates={this.props.showDisabledDates}
+              style={styles.month}
+              dayStyle={styles.day}
             />
           </div>
         </div>

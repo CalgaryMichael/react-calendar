@@ -11,7 +11,9 @@ export default class Week extends Component {
     isDateInRange: PropTypes.func,
     onDateClick: PropTypes.func,
     onDateMouseEnter: PropTypes.func,
-    showDisabledDates: PropTypes.bool
+    showDisabledDates: PropTypes.bool,
+    style: PropTypes.object,
+    dayStyle: PropTypes.object
   };
 
   static defaultProps = {
@@ -19,20 +21,10 @@ export default class Week extends Component {
     isDateSelected: () => false,
     isDateInRange: () => false,
     onDateClick: () => {},
-    onDateMouseEnter: () => {}
+    onDateMouseEnter: () => {},
+    style: {},
+    dayStyle: {}
   };
-
-  getStyles() {
-    const styles = {};
-    styles.outer = {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '100%',
-      height: '100%'
-    }
-    return styles;
-  }
 
   generateDays() {
     let days = [];
@@ -48,6 +40,7 @@ export default class Week extends Component {
           onClick={this.props.onDateClick}
           onMouseEnter={this.props.onDateMouseEnter}
           showDisabled={this.props.showDisabledDates}
+          style={this.props.dayStyle}
         />
       );
       day = dateFns.addDays(day, 1);
@@ -56,12 +49,11 @@ export default class Week extends Component {
   }
 
   render() {
-    const styles = this.getStyles();
     const days = this.generateDays();
     return (
-      <div className='calendar-week' style={styles.outer}>
+      <tr className='calendar-week' style={this.props.style}>
         {days}
-      </div>
+      </tr>
     );
   }
 }

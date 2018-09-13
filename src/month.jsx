@@ -12,6 +12,8 @@ export default class Month extends Component {
     onDateMouseEnter: PropTypes.func,
     headerFormat: PropTypes.string,
     style: PropTypes.object,
+    weekStyle: PropTypes.object,
+    dayStyle: PropTypes.object,
     showDisabledDates: PropTypes.bool
   };
 
@@ -37,22 +39,20 @@ export default class Month extends Component {
     styles.outer = {
       width: '100%',
       height: '100%',
+      marginTop: '10px',
+      borderCollapse: 'collapse',
+      borderSpacing: 0,
       ...this.props.style
     };
     styles.dateHeader = {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '100%',
-      marginTop: '10px',
       textAlign: 'center',
-      fontWeight: 300
+      fontWeight: 500,
+      padding: 0,
+      paddingBottom: '5px'
     };
     styles.weeks = {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-evenly',
-      height: '100%'
+      borderCollapse: 'collapse',
+      borderSpacing: 0
     };
     return styles;
   }
@@ -73,6 +73,8 @@ export default class Month extends Component {
           onDateClick={this.props.onDateClick}
           onDateMouseEnter={this.props.onDateMouseEnter}
           showDisabledDates={this.props.showDisabledDates}
+          style={this.props.weekStyle}
+          dayStyle={this.props.dayStyle}
         />
       );
     }
@@ -84,15 +86,15 @@ export default class Month extends Component {
     const startDate = dateFns.startOfWeek(this.props.currentMonth);
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div style={{width: '100%'}} key={i}>
+        <th style={styles.dateHeader} key={i}>
           {dateFns.format(dateFns.addDays(startDate, i), this.props.headerFormat)}
-        </div>
+        </th>
       );
     }
     return (
-      <div className="calendar-days-header" style={styles.dateHeader}>
+      <tr className="calendar-days-header">
         {days}
-      </div>
+      </tr>
     );
   }
 
@@ -101,12 +103,14 @@ export default class Month extends Component {
     const header = this.renderDaysHeader(styles);
     const weeks = this.generateWeeks();
     return (
-      <div className='calendar-month' style={styles.outer}>
-        {header}
-        <div className='calendar-weeks' style={styles.weeks}>
+      <table className='calendar-month' style={styles.outer}>
+        <thead>
+          {header}
+        </thead>
+        <tbody className='calendar-weeks' style={styles.weeks}>
           {weeks}
-        </div>
-      </div>
+        </tbody>
+      </table>
     )
   }
 }
