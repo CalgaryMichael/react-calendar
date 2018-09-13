@@ -7,17 +7,19 @@ export default class Week extends Component {
   static propTypes = {
     startDate: PropTypes.instanceOf(Date),
     monthStart: PropTypes.instanceOf(Date),
+    isDateDisabled: PropTypes.func,
     isDateSelected: PropTypes.func,
     isDateInRange: PropTypes.func,
     onDateClick: PropTypes.func,
     onDateMouseEnter: PropTypes.func,
-    showDisabledDates: PropTypes.bool,
+    showSurplusDates: PropTypes.bool,
     style: PropTypes.object,
     dayStyle: PropTypes.object
   };
 
   static defaultProps = {
-    showDisabledDates: true,
+    showSurplusDates: true,
+    isDateDisabled: () => false,
     isDateSelected: () => false,
     isDateInRange: () => false,
     onDateClick: () => {},
@@ -30,16 +32,18 @@ export default class Week extends Component {
     let days = [];
     let day = this.props.startDay;
     for (let i = 0; i < 7; i++) {
+      const isSameMonth = dateFns.isSameMonth(day, this.props.monthStart);
       days.push(
         <Day
           key={day}
           day={day}
-          disabled={!dateFns.isSameMonth(day, this.props.monthStart)}
+          showOutOfMonth={this.props.showSurplusDates || isSameMonth}
+          outOfMonth={!isSameMonth}
+          disabled={this.props.isDateDisabled(day)}
           selected={this.props.isDateSelected(day)}
           inRange={this.props.isDateInRange(day)}
           onClick={this.props.onDateClick}
           onMouseEnter={this.props.onDateMouseEnter}
-          showDisabled={this.props.showDisabledDates}
           style={this.props.dayStyle}
         />
       );

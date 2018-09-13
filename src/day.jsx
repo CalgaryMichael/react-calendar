@@ -2,14 +2,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import dateFns from 'date-fns';
 
+export const colors = {
+  selected: '#73CEDA',
+  hovered: '#DCF7FA',
+  hoveredSelected: '#80DDEA',
+  inRange: '#B0EAF2',
+  defaultBorder: '#E4E7E7'
+}
+
 export default class Day extends Component {
   static propTypes = {
     day: PropTypes.instanceOf(Date).isRequired,
     onClick: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
+    showOutOfMonth: PropTypes.bool,
+    outOfMonth: PropTypes.bool,
     disabled: PropTypes.bool,
-    showDisabled: PropTypes.bool,
     selected: PropTypes.bool,
     inRange: PropTypes.bool,
     higlightWeekend: PropTypes.bool,
@@ -22,7 +31,6 @@ export default class Day extends Component {
     onMouseEnter: () => {},
     onMouseLeave: () => {},
     disabled: false,
-    showDisabled: true,
     selected: false,
     highLightWeekend: false,
     dateFormat: 'D',
@@ -32,26 +40,26 @@ export default class Day extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isWeekend: dateFns.isWeekend(this.props.day),
+      isWeekend: dateFns.isWeekend(props.day),
       hovered: false
     }
   }
 
   onClick = (e) => {
-    if (!this.props.disabled) {
+    if (!this.props.disabled && !this.props.outOfMonth) {
       this.props.onClick(this.props.day);
     }
   };
 
   onMouseEnter = (e) => {
-    if (!this.props.disabled) {
+    if (!this.props.disabled && !this.props.outOfMonth) {
       this.setState({ hovered: true });
       this.props.onMouseEnter(this.props.day);
     }
   };
 
   onMouseLeave = (e) => {
-    if (!this.props.disabled) {
+    if (!this.props.disabled && !this.props.outOfMonth) {
       this.setState({ hovered: false });
       this.props.onMouseLeave(this.props.day);
     }
@@ -62,7 +70,7 @@ export default class Day extends Component {
     styles.outer = {
       borderWidth: '0.5px',
       borderStyle: 'solid',
-      borderColor: '#e4e7e7',
+      borderColor: colors.defaultBorder,
       boxSizing: 'border-box',
       cursor: 'pointer',
       padding: 0,
@@ -72,27 +80,38 @@ export default class Day extends Component {
       fontWeight: 400,
       margin: '5px'
     };
-    if (this.state.isWeekend && this.props.higlightWeekend) {
-      styles.outer.backgroundColor = '#EEEEEE';
+    if (!this.props.showOutOfMonth && this.props.outOfMonth) {
+      styles.outer.border = 'none';
+      styles.outer.backgroundColor = 'none';
+      styles.outer.cursor = 'default';
+      styles.date.display = 'none';
     }
-    if (this.props.disabled) {
-      if (!this.props.showDisabled) {
-        styles.outer.border = 'none';
-        styles.outer.backgroundColor = 'none';
-        styles.date.display = 'none';
+    else {
+      if (this.state.isWeekend && this.props.higlightWeekend) {
+        styles.outer.backgroundColor = '#EEEEEE';
       }
-      else {
+      if (this.props.disabled || this.props.outOfMonth) {
+        styles.outer.cursor = 'default';
         styles.date.color = '#AAAAAA';
       }
-    }
-    else if (this.props.selected) {
-      styles.outer.backgroundColor = '#FFE0B2';
-    }
-    else if (this.props.inRange) {
-      styles.outer.backgroundColor = '#FFF3E0';
-    }
-    else if (this.state.hovered) {
-      styles.outer.backgroundColor = '#e4e7e7';
+      else if (this.props.selected) {
+        styles.outer.backgroundColor = colors.selected;
+        styles.outer.borderColor = colors.selected;
+        styles.outer.borderStyle = 'double';
+        if (this.state.hovered) {
+          styles.outer.backgroundColor = colors.hoveredSelected;
+        }
+      }
+      else if (this.state.hovered) {
+        styles.outer.backgroundColor = colors.hovered;
+        styles.outer.borderColor = colors.selected;
+        styles.outer.borderStyle = 'double';
+      }
+      else if (this.props.inRange) {
+        styles.outer.backgroundColor = colors.inRange;
+        styles.outer.borderColor = colors.selected;
+        styles.outer.borderStyle = 'double';
+      }
     }
     return styles;
   }
@@ -104,6 +123,9 @@ export default class Day extends Component {
     }
     if (this.props.disabled) {
       className += ' disabled'
+    }
+    else if (this.props.outOfMonth) {
+      className += ' out-of-month'
     }
     else if (this.props.selected) {
       className += ' selected';

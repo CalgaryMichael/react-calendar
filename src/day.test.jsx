@@ -1,5 +1,5 @@
 import React from 'react';
-import Day from './day.jsx';
+import Day, { colors } from './day.jsx';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import dateFns from 'date-fns';
@@ -67,26 +67,45 @@ describe('Day Tests', () => {
         inRange: false
       };
       const day = new Day(props);
-      expect(day.getStyles().date.color).toBe(undefined);
+      const styles = day.getStyles();
+      expect(styles.date.color).toBe(undefined);
+      expect(styles.outer.cursor).toBe('pointer');
     });
 
-    it('shows disabled', () => {
+    it('is disabled', () => {
       const props = {
         day: new Date(2018, 1, 1),
         disabled: true,
-        showDisabled: true,
         selected: false,
         inRange: false
       };
       const day = new Day(props);
-      expect(day.getStyles().date.color).toBe('#AAAAAA');
+      const styles = day.getStyles();
+      expect(styles.date.color).toBe('#AAAAAA');
+      expect(styles.outer.cursor).toBe('default');
     });
 
-    it('does not show disabled', () => {
+    it('shows out of month', () => {
       const props = {
         day: new Date(2018, 1, 1),
+        outOfMonth: true,
+        showOutOfMonth: true,
         disabled: true,
-        showDisabled: false,
+        selected: false,
+        inRange: false
+      };
+      const day = new Day(props);
+      const styles = day.getStyles();
+      expect(styles.date.color).toBe('#AAAAAA');
+      expect(styles.outer.cursor).toBe('default');
+    });
+
+    it('does not show out of month', () => {
+      const props = {
+        day: new Date(2018, 1, 1),
+        outOfMonth: true,
+        showOutOfMonth: false,
+        disabled: true,
         selected: false,
         inRange: false
       };
@@ -107,7 +126,11 @@ describe('Day Tests', () => {
       };
       const day = new Day(props);
       day.state.hovered = true;
-      expect(day.getStyles().outer.backgroundColor).toBe('#e4e7e7');
+
+      const styles = day.getStyles();
+      expect(styles.outer.backgroundColor).toBe(colors.hovered);
+      expect(styles.outer.borderColor).toBe(colors.selected);
+      expect(styles.outer.borderStyle).toBe('double');
     });
 
     it('is hovered and disabled', () => {
@@ -119,8 +142,11 @@ describe('Day Tests', () => {
         inRange: false
       };
       const day = new Day(props);
-      day.state.overed = true;
-      expect(day.getStyles().date.color).toBe('#AAAAAA');
+      day.state.hovered = true;
+
+      const styles = day.getStyles();
+      expect(styles.date.color).toBe('#AAAAAA');
+      expect(styles.outer.cursor).toBe('default');
     });
 
     it('is selected', () => {
@@ -132,7 +158,27 @@ describe('Day Tests', () => {
         inRange: false
       };
       const day = new Day(props);
-      expect(day.getStyles().outer.backgroundColor).toBe('#FFE0B2');
+      const styles = day.getStyles();
+      expect(styles.outer.backgroundColor).toBe(colors.selected);
+      expect(styles.outer.borderColor).toBe(colors.selected);
+      expect(styles.outer.borderStyle).toBe('double');
+    });
+
+    it('is selected and hovered', () => {
+      const props = {
+        day: new Date(2018, 1, 1),
+        disabled: false,
+        showDisabled: true,
+        selected: true,
+        inRange: false
+      };
+      const day = new Day(props);
+      day.state.hovered = true;
+
+      const styles = day.getStyles();
+      expect(styles.outer.backgroundColor).toBe(colors.hoveredSelected);
+      expect(styles.outer.borderColor).toBe(colors.selected);
+      expect(styles.outer.borderStyle).toBe('double');
     });
 
     it('is in range', () => {
@@ -144,7 +190,10 @@ describe('Day Tests', () => {
         inRange: true
       };
       const day = new Day(props);
-      expect(day.getStyles().outer.backgroundColor).toBe('#FFF3E0');
+      const styles = day.getStyles();
+      expect(styles.outer.backgroundColor).toBe(colors.inRange);
+      expect(styles.outer.borderColor).toBe(colors.selected);
+      expect(styles.outer.borderStyle).toBe('double');
     });
 
     it('is in range and selected', () => {
@@ -156,19 +205,23 @@ describe('Day Tests', () => {
         inRange: true
       };
       const day = new Day(props);
-      expect(day.getStyles().outer.backgroundColor).toBe('#FFE0B2');
+      const styles = day.getStyles();
+      expect(styles.outer.backgroundColor).toBe(colors.selected);
+      expect(styles.outer.borderColor).toBe(colors.selected);
+      expect(styles.outer.borderStyle).toBe('double');
     });
 
     it('is disabled and selected and in range', () => {
       const props = {
         day: new Date(2018, 1, 1),
         disabled: true,
-        showDisabled: true,
         selected: true,
         inRange: true
       };
       const day = new Day(props);
-      expect(day.getStyles().date.color).toBe('#AAAAAA');
+      const styles = day.getStyles();
+      expect(styles.outer.cursor).toBe('default');
+      expect(styles.date.color).toBe('#AAAAAA');
     });
   });
 

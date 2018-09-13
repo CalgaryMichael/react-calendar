@@ -13,12 +13,15 @@ export default class CalendarRange extends BaseCalendar {
     onBeginningDateClick: PropTypes.func,
     onEndDateClick: PropTypes.func,
     style: PropTypes.object,
-    showDisabledDates: PropTypes.bool
+    showSurplusDates: PropTypes.bool,
+    futureMonthLimit: PropTypes.number,
+    pastMonthLimit: PropTypes.number
   };
 
   static defaultProps = {
     headerFormat: 'MMMM YYYY',
-    showDisabledDates: true
+    showSurplusDates: true,
+    pastMonthLimit: 1
   }
 
   constructor(props) {
@@ -29,7 +32,10 @@ export default class CalendarRange extends BaseCalendar {
       currentYear: dateFns.getYear(currentMonth),
       beginningDate: props.beginningDate,
       endDate: props.endDate,
-      hoveredDate: null
+      hoveredDate: null,
+      incrementHover: false,
+      decrementHover: false,
+      disableDecrement: false
     };
   }
 
@@ -122,6 +128,10 @@ export default class CalendarRange extends BaseCalendar {
     }
   }
 
+  isDateDisabled = (day) => {
+    return dateFns.compareAsc(day, new Date) < 1;
+  }
+
   isDateSelected = (day) => {
     return dateFns.isSameDay(day, this.state.beginningDate) || dateFns.isSameDay(day, this.state.endDate);
   }
@@ -144,6 +154,34 @@ export default class CalendarRange extends BaseCalendar {
     return false;
   }
 
+  nextMonth = () => {
+    if (!this.state.disableIncrement) {
+      const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
+      const currentYear = dateFns.getYear(currentMonth);
+      const monthDifference = dateFns.differenceInCalendarMonths(new Date(), currentMonth);
+      this.setState({
+        disableIncrement: this.props.futureMonthLimit != null && monthDifference <= this.props.futureMonthLimit,
+        disableDecrement: false,
+        currentMonth,
+        currentYear
+      });
+    }
+  };
+
+  prevMonth = () => {
+    if (!this.state.disableDecrement) {
+      const currentMonth = dateFns.subMonths(this.state.currentMonth, 1);
+      const currentYear = dateFns.getYear(currentMonth);
+      const monthDifference = dateFns.differenceInCalendarMonths(new Date(), currentMonth);
+      this.setState({
+        disableIncrement: false,
+        disableDecrement: this.props.pastMonthLimit != null && monthDifference >= this.props.pastMonthLimit,
+        currentMonth,
+        currentYear
+      });
+    }
+  };
+
   getNextMonth = () => {
     return dateFns.addMonths(this.state.currentMonth, 1);
   }
@@ -159,15 +197,22 @@ export default class CalendarRange extends BaseCalendar {
 
   getStyles() {
     const styles = super.getStyles();
-    styles.chevron.position = 'absolute';
     styles.chevronLeft = {
-      ...styles.chevron,
+      ...styles.chevronLeft,
+      position: 'absolute',
       left: '10px'
     };
+    if (this.state.disableDecrement) {
+      styles.chevronLeft.opacity = 0.5;
+    }
     styles.chevronRight = {
-      ...styles.chevron,
+      ...styles.chevronRight,
+      position: 'absolute',
       right: '10px'
     };
+    if (this.state.disableIncrement) {
+      styles.chevronRight.opacity = 0.5;
+    }
     styles.months = {
       display: 'flex',
       flexDirection: 'row',
@@ -197,37 +242,41 @@ export default class CalendarRange extends BaseCalendar {
   render() {
     const styles = this.getStyles();
     const nextMonth = this.getNextMonth();
+    const increment = this.renderIncrement(styles);
+    const decrement = this.renderDecrement(styles);
     return (
       <div style={this.props.style}>
         <div className='calendar-months' style={styles.months}>
           <div style={styles.monthOuter}>
-            <div className='calendar-month-decrement' style={styles.chevronLeft} onClick={this.prevMonth}>
-              <i className='fa fa-chevron-left' />
+            {decrement}
+            <div className='calendar-title'>
+              {this.formatTitle(this.state.currentMonth)}
             </div>
-            <div className='calendar-title'>{dateFns.format(this.state.currentMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={this.state.currentMonth}
+              isDateDisabled={this.isDateDisabled}
               isDateSelected={this.isDateSelected}
               isDateInRange={this.isDateInRange}
               onDateClick={this.onDateClick}
               onDateMouseEnter={this.onDateMouseEnter}
-              showDisabledDates={this.props.showDisabledDates}
+              showSurplusDates={this.props.showSurplusDates}
               style={styles.month}
               dayStyle={styles.day}
             />
           </div>
           <div style={styles.monthOuter}>
-            <div className='calendar-month-increment' style={styles.chevronRight} onClick={this.nextMonth}>
-              <i className='fa fa-chevron-right' />
+            {increment}
+            <div className='calendar-title'>
+              {this.formatTitle(nextMonth)}
             </div>
-            <div className='calendar-title'>{dateFns.format(nextMonth, this.props.headerFormat)}</div>
             <Month
               currentMonth={nextMonth}
+              isDateDisabled={this.isDateDisabled}
               isDateSelected={this.isDateSelected}
               isDateInRange={this.isDateInRange}
               onDateClick={this.onDateClick}
               onDateMouseEnter={this.onDateMouseEnter}
-              showDisabledDates={this.props.showDisabledDates}
+              showSurplusDates={this.props.showSurplusDates}
               style={styles.month}
               dayStyle={styles.day}
             />

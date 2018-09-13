@@ -21,7 +21,7 @@ export default class App extends React.Component {
         {...this.state}
         onDateClick={this.onDateClick}
         style={{height: '250px', width: '650px'}}
-        showDisabledDates={false}
+        showSurplusDates={false}
       />
    )
   }

@@ -6,6 +6,7 @@ import Week from './week.jsx';
 export default class Month extends Component {
   static propTypes = {
     currentMonth: PropTypes.instanceOf(Date).isRequired,
+    isDateDisabled: PropTypes.func,
     isDateSelected: PropTypes.func,
     isDateInRange: PropTypes.func,
     onDateClick: PropTypes.func,
@@ -14,13 +15,13 @@ export default class Month extends Component {
     style: PropTypes.object,
     weekStyle: PropTypes.object,
     dayStyle: PropTypes.object,
-    showDisabledDates: PropTypes.bool
+    showSurplusDates: PropTypes.bool
   };
 
   static defaultProps = {
     headerFormat: 'ddd',
     style: {},
-    showDisabledDates: true
+    showSurplusDates: true
   };
 
   getMonthInfo() {
@@ -68,11 +69,12 @@ export default class Month extends Component {
           key={weekNum}
           startDay={day}
           monthStart={monthStart}
+          isDateDisabled={this.props.isDateDisabled}
           isDateSelected={this.props.isDateSelected}
           isDateInRange={this.props.isDateInRange}
           onDateClick={this.props.onDateClick}
           onDateMouseEnter={this.props.onDateMouseEnter}
-          showDisabledDates={this.props.showDisabledDates}
+          showSurplusDates={this.props.showSurplusDates}
           style={this.props.weekStyle}
           dayStyle={this.props.dayStyle}
         />

@@ -18,10 +18,12 @@ describe('Week Tests', () => {
       expect(days.length).toBe(7);
 
       expect(days[0].props.day).toEqual(props.startDay);
-      expect(days[0].props.disabled).toEqual(true);
+      expect(days[0].props.outOfMonth).toEqual(true);
+      expect(days[0].props.disabled).toEqual(false);
       expect(days[0].props.selected).toEqual(false);
 
       expect(days[1].props.day).toEqual(props.monthStart);
+      expect(days[1].props.outOfMonth).toEqual(false);
       expect(days[1].props.disabled).toEqual(false);
       expect(days[1].props.selected).toEqual(true);
     });
