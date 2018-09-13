@@ -66,7 +66,17 @@ export default class CalendarRange extends BaseCalendar {
     else {
       // they have already selected a range,
       // now they are wanting to alter the range
-      if (dateFns.compareAsc(day, this.state.beginningDate) === -1) {
+      const compareBeg = dateFns.compareAsc(day, this.state.beginningDate);
+      const compareEnd = dateFns.compareAsc(day, this.state.endDate);
+      if (compareBeg === 0) {
+        // they clicked previously selected beginning date
+        // so we assume they want to begin a new date range
+        // starting from this day
+        this.setState({ beginningDate: day, endDate: null });
+        this.props.onDateClick(day, null);
+      }
+      else if (compareBeg === -1) {
+        // they have clicked on a date before the selected beginning
         if (Math.abs(dateFns.differenceInCalendarDays(day, this.state.beginningDate)) < 3) {
           this.setState({ beginningDate: day });
           this.props.onDateClick(day, this.state.endDate);
@@ -81,7 +91,15 @@ export default class CalendarRange extends BaseCalendar {
           this.props.onDateClick(day, null);
         }
       }
-      else if (dateFns.compareAsc(day, this.state.endDate) === 1) {
+      else if (compareEnd === 0) {
+        // they clicked previously selected end date
+        // so we assume they want to begin a new date range
+        // starting from this day
+        this.setState({ beginningDate: day, endDate: null });
+        this.props.onDateClick(day, null);
+      }
+      else if (compareEnd === 1) {
+        // they have clicked on a date after the selected end
         if (Math.abs(dateFns.differenceInCalendarDays(day, this.state.endDate)) < 3) {
           this.setState({ endDate: day, hoeveredDate: null });
           this.props.onDateClick(this.state.beginningDate, day);

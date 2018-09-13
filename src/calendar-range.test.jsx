@@ -2,6 +2,7 @@ import React from 'react';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import CalendarRange from './calendar-range.jsx';
+import dateFns from 'date-fns';
 
 describe('CalendarRange Tests', () => {
   describe('CalendarRange.onDateClick', () => {
@@ -42,7 +43,7 @@ describe('CalendarRange Tests', () => {
       expect(calendar.state().endDate).toBe(day2);
     });
 
-    describe('older than beginning date selected', () => {
+    describe('younger than beginning date selected', () => {
       it('no end date', () => {
         const clickSpy = sinon.spy();
         const day1 = new Date(2018, 0, 1);
@@ -146,6 +147,26 @@ describe('CalendarRange Tests', () => {
     });
 
     describe('click date within range', () => {
+      it('same day as beginning', () => {
+        const clickSpy = sinon.spy();
+        const day1 = new Date(2018, 0, 1);
+        const day2 = new Date(2018, 0, 15);
+        const props = {
+          beginningDate: day1,
+          endDate: day2,
+          onDateClick: clickSpy
+        };
+        const calendar = shallow(<CalendarRange {...props} />);
+        expect(calendar.state().beginningDate).toBe(day1);
+        expect(calendar.state().endDate).toBe(day2);
+
+        const day3 = new Date(2018, 0, 1);
+        calendar.instance().onDateClick(day3);
+        expect(clickSpy.calledWith(day3, null)).toBe(true);
+        expect(calendar.state().beginningDate).toBe(day3);
+        expect(calendar.state().endDate).toBe(null);
+      });
+
       it('less than 2 day difference from beginning', () => {
         const clickSpy = sinon.spy();
         const day1 = new Date(2018, 0, 1);
@@ -186,6 +207,26 @@ describe('CalendarRange Tests', () => {
         expect(calendar.state().endDate).toBe(null);
       });
 
+      it('same day as end', () => {
+        const clickSpy = sinon.spy();
+        const day1 = new Date(2018, 0, 1);
+        const day2 = new Date(2018, 0, 15);
+        const props = {
+          beginningDate: day1,
+          endDate: day2,
+          onDateClick: clickSpy
+        };
+        const calendar = shallow(<CalendarRange {...props} />);
+        expect(calendar.state().beginningDate).toBe(day1);
+        expect(calendar.state().endDate).toBe(day2);
+
+        const day3 = new Date(2018, 0, 15);
+        calendar.instance().onDateClick(day3);
+        expect(clickSpy.calledWith(day3, null)).toBe(true);
+        expect(calendar.state().beginningDate).toBe(day3);
+        expect(calendar.state().endDate).toBe(null);
+      });
+
       it('less than 2 day difference from end', () => {
         const clickSpy = sinon.spy();
         const day1 = new Date(2018, 0, 1);
@@ -206,7 +247,7 @@ describe('CalendarRange Tests', () => {
         expect(calendar.state().endDate).toBe(day3);
       });
 
-      it('more than 2 day difference from beginning', () => {
+      it('more than 2 day difference from end', () => {
         const clickSpy = sinon.spy();
         const day1 = new Date(2018, 0, 1);
         const day2 = new Date(2018, 0, 15);
@@ -225,6 +266,136 @@ describe('CalendarRange Tests', () => {
         expect(calendar.state().beginningDate).toBe(day3);
         expect(calendar.state().endDate).toBe(null);
       });
+    });
+  });
+
+  describe('CalendarRange.onDateMouseEnter', () => {
+    it('no beginning or end date', () => {
+      const props = {
+        beginningDate: null,
+        endDate: null
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+
+      let state = calendar.state();
+      expect(state.beginningDate).toBe(null);
+      expect(state.endDate).toBe(null);
+      expect(state.hoveredDate).toBe(null);
+
+      const hoveredDay = new Date(2018, 0, 1);
+      calendar.instance().onDateMouseEnter(hoveredDay);
+
+      state = calendar.state();
+      expect(state.beginningDate).toBe(null);
+      expect(state.endDate).toBe(null);
+      expect(state.hoveredDate).toBe(null);
+    });
+
+    it('no end date', () => {
+      const beginningDate = new Date(2018, 0, 1);
+      const props = {
+        beginningDate,
+        endDate: null
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+
+      let state = calendar.state();
+      expect(state.beginningDate).toBe(beginningDate);
+      expect(state.endDate).toBe(null);
+      expect(state.hoveredDate).toBe(null);
+
+      const hoveredDay = new Date(2018, 0, 5);
+      calendar.instance().onDateMouseEnter(hoveredDay);
+
+      state = calendar.state();
+      expect(state.beginningDate).toBe(beginningDate);
+      expect(state.endDate).toBe(null);
+      expect(state.hoveredDate).toBe(hoveredDay);
+    });
+
+    it('with beginning and end date', () => {
+      const beginningDate = new Date(2018, 0, 1);
+      const endDate = new Date(2018, 0, 12);
+      const props = {
+        beginningDate,
+        endDate
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+
+      let state = calendar.state();
+      expect(state.beginningDate).toBe(beginningDate);
+      expect(state.endDate).toBe(endDate);
+      expect(state.hoveredDate).toBe(null);
+
+      const hoveredDay = new Date(2018, 0, 5);
+      calendar.instance().onDateMouseEnter(hoveredDay);
+
+      state = calendar.state();
+      expect(state.beginningDate).toBe(beginningDate);
+      expect(state.endDate).toBe(endDate);
+      expect(state.hoveredDate).toBe(null);
+    });
+  });
+
+  describe('CalendarRange.isDateDisabled', () => {
+    it('date too young', () => {
+      const day = dateFns.subDays(new Date(), 1);
+      const calendar = new CalendarRange({});
+      expect(calendar.isDateDisabled(day)).toBe(true);
+    });
+
+    it('same day', () => {
+      const day = new Date();
+      const calendar = new CalendarRange({});
+      expect(calendar.isDateDisabled(day)).toBe(true);
+    });
+
+    it('date in the future', () => {
+      const day = dateFns.addDays(new Date(), 1);
+      const calendar = new CalendarRange({});
+      expect(calendar.isDateDisabled(day)).toBe(false);
+    });
+  });
+
+  describe('CalendarRange.isDateSelected', () => {
+    it('no beginning or end date', () => {
+      const calendar = new CalendarRange({});
+      calendar.state = {
+        beginningDate: null,
+        endDate: null
+      };
+      const day = new Date(2018, 0, 1);
+      expect(calendar.isDateSelected(day)).toBe(false);
+    });
+
+    it('matches beginning date', () => {
+      const calendar = new CalendarRange({});
+      calendar.state = {
+        beginningDate: new Date(2018, 0, 1),
+        endDate: new Date(2018, 0, 15)
+      };
+      const day = new Date(2018, 0, 1);
+      expect(calendar.isDateSelected(day)).toBe(true);
+    });
+
+    it('matches end date', () => {
+      const calendar = new CalendarRange({});
+      calendar.state = {
+        beginningDate: new Date(2018, 0, 1),
+        endDate: new Date(2018, 0, 15)
+      };
+      const day = new Date(2018, 0, 15);
+      expect(calendar.isDateSelected(day)).toBe(true);
+    });
+
+    it('does not match either date', () => {
+      const calendar = new CalendarRange({});
+      calendar.state = {
+        beginningDate: new Date(2018, 0, 1),
+        endDate: new Date(2018, 0, 15)
+      };
+      const day = new Date(2018, 0, 2);
+      expect(calendar.isDateSelected(day)).toBe(false);
     });
   });
 
@@ -307,6 +478,32 @@ describe('CalendarRange Tests', () => {
         const day = new Date(2017, 11, 15);
         expect(calendar.isDateInRange(day)).toBe(false);
       });
+    });
+  });
+
+  describe('CalendarRange.getStyles', () => {
+    it('increment and decrement enabled', () => {
+      const calendar = new CalendarRange({});
+      calendar.state.disableDecrement = false;
+      const styles = calendar.getStyles();
+      expect(styles.chevronLeft.opacity).toBe(undefined);
+      expect(styles.chevronRight.opacity).toBe(undefined);
+    });
+
+    it('decrement disabled', () => {
+      const calendar = new CalendarRange({});
+      calendar.state.disableDecrement = true;
+      const styles = calendar.getStyles();
+      expect(styles.chevronLeft.opacity).toBe(0.5);
+      expect(styles.chevronRight.opacity).toBe(undefined);
+    });
+
+    it('increment disabled', () => {
+      const calendar = new CalendarRange({});
+      calendar.state.disableIncrement = true;
+      const styles = calendar.getStyles();
+      expect(styles.chevronLeft.opacity).toBe(undefined);
+      expect(styles.chevronRight.opacity).toBe(0.5);
     });
   });
 });
