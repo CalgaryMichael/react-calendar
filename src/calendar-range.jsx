@@ -35,6 +35,7 @@ export default class CalendarRange extends BaseCalendar {
       hoveredDate: null,
       incrementHover: false,
       decrementHover: false,
+      disableIncrement: false,
       disableDecrement: false
     };
   }
@@ -176,9 +177,9 @@ export default class CalendarRange extends BaseCalendar {
     if (!this.state.disableIncrement) {
       const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
       const currentYear = dateFns.getYear(currentMonth);
-      const monthDifference = dateFns.differenceInCalendarMonths(new Date(), currentMonth);
+      const monthDifference = dateFns.differenceInCalendarMonths(currentMonth, new Date());
       this.setState({
-        disableIncrement: this.props.futureMonthLimit != null && monthDifference <= this.props.futureMonthLimit,
+        disableIncrement: this.props.futureMonthLimit != null && monthDifference >= this.props.futureMonthLimit,
         disableDecrement: false,
         currentMonth,
         currentYear

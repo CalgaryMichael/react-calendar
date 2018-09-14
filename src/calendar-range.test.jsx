@@ -481,6 +481,82 @@ describe('CalendarRange Tests', () => {
     });
   });
 
+  describe('Calendar.nextMonth', () => {
+    it('increment enabled', () => {
+      const props = {
+        beginningDate: new Date(),
+        futureMonthLimit: null,
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+      expect(calendar.state().currentMonth).toEqual(props.beginningDate)
+      expect(calendar.state().disableIncrement).toBe(false)
+
+      calendar.instance().nextMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.addMonths(props.beginningDate, 1))
+      expect(calendar.state().disableIncrement).toBe(false)
+
+      calendar.instance().nextMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.addMonths(props.beginningDate, 2))
+      expect(calendar.state().disableIncrement).toBe(false)
+    });
+
+    it('increment disabled', () => {
+      const props = {
+        beginningDate: dateFns.addMonths(new Date(), 5),
+        futureMonthLimit: 1,
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+      expect(calendar.state().currentMonth).toEqual(props.beginningDate)
+      expect(calendar.state().disableIncrement).toBe(false)
+
+      calendar.instance().nextMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.addMonths(props.beginningDate, 1))
+      expect(calendar.state().disableIncrement).toBe(true)
+
+      calendar.instance().nextMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.addMonths(props.beginningDate, 1))
+      expect(calendar.state().disableIncrement).toBe(true)
+    });
+  });
+
+  describe('CalendarRange.prevMonth', () => {
+    it('decrement enabled', () => {
+      const props = {
+        beginningDate: new Date(),
+        pastMonthLimit: null,
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+      expect(calendar.state().currentMonth).toEqual(props.beginningDate)
+      expect(calendar.state().disableDecrement).toBe(false)
+
+      calendar.instance().prevMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.subMonths(props.beginningDate, 1))
+      expect(calendar.state().disableDecrement).toBe(false)
+
+      calendar.instance().prevMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.subMonths(props.beginningDate, 2))
+      expect(calendar.state().disableDecrement).toBe(false)
+    });
+
+    it('decrement disabled', () => {
+      const props = {
+        beginningDate: dateFns.subMonths(new Date(), 5),
+        pastMonthLimit: 1,
+      };
+      const calendar = shallow(<CalendarRange {...props} />);
+      expect(calendar.state().currentMonth).toEqual(props.beginningDate)
+      expect(calendar.state().disableDecrement).toBe(false)
+
+      calendar.instance().prevMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.subMonths(props.beginningDate, 1))
+      expect(calendar.state().disableDecrement).toBe(true)
+
+      calendar.instance().prevMonth();
+      expect(calendar.state().currentMonth).toEqual(dateFns.subMonths(props.beginningDate, 1))
+      expect(calendar.state().disableDecrement).toBe(true)
+    });
+  });
+
   describe('CalendarRange.getStyles', () => {
     it('increment and decrement enabled', () => {
       const calendar = new CalendarRange({});
