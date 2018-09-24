@@ -4,6 +4,13 @@ import dateFns from 'date-fns';
 export default class BaseCalendar extends Component {
     getStyles() {
       const styles = {};
+      styles.outer = {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        height: '93%',
+        width: '99%'
+      };
       styles.header = {
         display: 'flex',
         flexDirection: 'row',
@@ -33,13 +40,13 @@ export default class BaseCalendar extends Component {
     nextMonth = () => {
       const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
       const currentYear = dateFns.getYear(currentMonth);
-      this.setState({ currentMonth, currentYear });
+      this.setState({ currentMonth, currentYear, increment: true });
     };
 
     prevMonth = () => {
       const currentMonth = dateFns.subMonths(this.state.currentMonth, 1);
       const currentYear = dateFns.getYear(currentMonth);
-      this.setState({ currentMonth, currentYear });
+      this.setState({ currentMonth, currentYear, increment: false });
     };
 
     incrementMouseEnter = () => {

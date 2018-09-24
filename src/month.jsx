@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import dateFns from 'date-fns';
+import { Transition } from 'react-transition-group';
 import Week from './week.jsx';
 
 export default class Month extends Component {
   static propTypes = {
     currentMonth: PropTypes.instanceOf(Date).isRequired,
+    visible: PropTypes.bool,
     isDateDisabled: PropTypes.func,
     isDateSelected: PropTypes.func,
     isDateInRange: PropTypes.func,
@@ -19,6 +21,7 @@ export default class Month extends Component {
   };
 
   static defaultProps = {
+    visible: true,
     headerFormat: 'ddd',
     style: {},
     showSurplusDates: true
@@ -35,14 +38,16 @@ export default class Month extends Component {
     };
   }
 
-  getStyles() {
+  getStyles(duration) {
     const styles = {};
     styles.outer = {
+      position: 'relative',
       width: '100%',
       height: '100%',
       marginTop: '10px',
       borderCollapse: 'collapse',
       borderSpacing: 0,
+      transition: `left ${duration}ms linear`,
       ...this.props.style
     };
     styles.dateHeader = {
@@ -101,18 +106,31 @@ export default class Month extends Component {
   }
 
   render() {
-    const styles = this.getStyles();
+    const duration = 350
+    const styles = this.getStyles(duration);
     const header = this.renderDaysHeader(styles);
     const weeks = this.generateWeeks();
+
+    const transitionStyle = {
+      entering: {left: '100%', position: 'absolute'},
+      entered: {left: 0, position: 'absolute'},
+      exiting: {left: 0, position: 'absolute'},
+      exited: {left: '-100%', position: 'absolute'}
+    };
+
     return (
-      <table className='calendar-month' style={styles.outer}>
-        <thead>
-          {header}
-        </thead>
-        <tbody className='calendar-weeks' style={styles.weeks}>
-          {weeks}
-        </tbody>
-      </table>
+      <Transition in={this.props.in && this.props.visible} timeout={{enter: 125, exit: 100}}>
+        {(state) => (
+          <table className='calendar-month' style={{...styles.outer, ...transitionStyle[state]}}>
+            <thead>
+              {header}
+            </thead>
+            <tbody className='calendar-weeks' style={styles.weeks}>
+              {weeks}
+            </tbody>
+          </table>
+        )}
+      </Transition>
     )
   }
 }
